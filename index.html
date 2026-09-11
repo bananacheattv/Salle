@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salle du mardi</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, #253451 0%, transparent 40%),
+        linear-gradient(145deg, #0d1117, #151b26);
+      color: white;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 430px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 26px;
+      padding: 28px 22px;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      text-align: center;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #aab4c3;
+      margin-bottom: 28px;
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 15px 16px;
+      margin-bottom: 20px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.13);
+      background: #171e2a;
+      color: white;
+      font-size: 16px;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #4b8cff;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #3478f6, #5f9cff);
+      color: white;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+    }
+
+    #message {
+      min-height: 24px;
+      margin-top: 18px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .success {
+      color: #55df93;
+    }
+
+    .error {
+      color: #ff6b6b;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+
+  <h1>Salle du mardi</h1>
+
+  <div class="subtitle">
+    Indique ta séance pour mardi
+  </div>
+
+  <form id="form">
+
+    <label for="date">Date</label>
+    <input
+      type="date"
+      id="date"
+      name="date"
+      required
+    >
+
+    <label for="seance">Séance</label>
+    <select
+      id="seance"
+      name="seance"
+      required
+    >
+      <option value="">Choisir une séance</option>
+      <option value="Musculation">Musculation</option>
+      <option value="Cardio">Cardio</option>
+      <option value="Powerlifting">Powerlifting</option>
+      <option value="Autre">Autre</option>
+    </select>
+
+    <label for="heure">Heure</label>
+    <input
+      type="time"
+      id="heure"
+      name="heure"
+      required
+    >
+
+    <button type="submit" id="btn">
+      Envoyer
+    </button>
+
+    <div id="message"></div>
+
+  </form>
+
+</div>
+
+
+<script>
+
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbyH6qEXxtNbr7STCq-_ruFCSwMp6u3Tjjp1FBKvj2Udl_KmV65D-DnKGEtMvi2UrtGIhg/exec";
+
+
+const form = document.getElementById("form");
+const btn = document.getElementById("btn");
+const message = document.getElementById("message");
+
+
+form.addEventListener("submit", async function(e) {
+
+  e.preventDefault();
+
+  btn.disabled = true;
+  btn.textContent = "Envoi...";
+  message.textContent = "";
+
+  const data = new FormData();
+
+  data.append(
+    "date",
+    document.getElementById("date").value
+  );
+
+  data.append(
+    "seance",
+    document.getElementById("seance").value
+  );
+
+  data.append(
+    "heure",
+    document.getElementById("heure").value
+  );
+
+
+  try {
+
+    await fetch(
+      SCRIPT_URL,
+      {
+        method: "POST",
+        body: data,
+        mode: "no-cors"
+      }
+    );
+
+    message.textContent =
+      "Réponse envoyée avec succès.";
+
+    message.className = "success";
+
+    form.reset();
+
+  }
+
+  catch (error) {
+
+    message.textContent =
+      "Erreur lors de l'envoi.";
+
+    message.className = "error";
+
+  }
+
+  finally {
+
+    btn.disabled = false;
+    btn.textContent = "Envoyer";
+
+  }
+
+});
+
+</script>
+
+</body>
+</html>
